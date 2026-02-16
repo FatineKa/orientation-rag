@@ -16,7 +16,7 @@ VECTOR_DB_PATH = BASE_DIR / "data" / "chroma_db"
 
 def load_formations():
     if not DATA_PATH.exists():
-        print(f"❌ Erreur: Fichier introuvable {DATA_PATH}")
+        print(f"[ERREUR] Fichier introuvable {DATA_PATH}")
         return []
     
     with open(DATA_PATH, 'r', encoding='utf-8') as f:

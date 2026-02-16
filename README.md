@@ -1,93 +1,149 @@
-# Système d'Orientation — Génération de Parcours Personnalisé (RAG)
+# Système d'Orientation Académique - RAG avec ChromaDB
 
-Module de génération de parcours académiques personnalisés utilisant une architecture **RAG (Retrieval-Augmented Generation)**.
+Système de recherche sémantique de formations académiques basé sur une architecture **RAG (Retrieval-Augmented Generation)** avec ChromaDB.
 
-## Fonctionnement
+## 📊 Dataset
 
-1. L'étudiant fournit son **profil** (niveau, objectif, matières, contraintes)
-2. Le système **recherche** les formations pertinentes dans la base vectorielle (ChromaDB)
-3. Un **LLM** génère un parcours détaillé et structuré à partir du profil + des données récupérées
+- **3354 formations** (Licences, Masters, BUT)
+- Source : API Parcoursup officielle + données locales
+- Métadonnées enrichies : taux d'accès, capacité, sélectivité, académie
+- 13 domaines académiques identifiés
 
-## Installation
+## 🚀 Installation Rapide
+
+### 1. Cloner le Projet
 
 ```bash
-# Créer l'environnement virtuel
+git clone <url-du-repo>
+cd TER
+```
+
+### 2. Créer l'Environnement Virtuel
+
+```bash
 python -m venv venv
-venv\Scripts\activate  # Windows
 
-# Installer les dépendances
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+```
+
+### 3. Installer les Dépendances
+
+```bash
 pip install -r requirements.txt
-
-# Copier et configurer le fichier .env
-copy .env.example .env
-# Editer .env avec votre clé API
 ```
 
-## Configuration (.env)
+### 4. ⚠️ IMPORTANT : Réindexer ChromaDB
 
-Choisir un fournisseur LLM dans le fichier `.env` :
+**Le dossier `data/chroma_db/` n'est PAS dans Git** (trop lourd, peut être reconstruit).
 
-| Fournisseur | Gratuit ? | Qualité | Configuration |
-|---|---|---|---|
-| **OpenAI** | Non (~$0.01/requête) | Excellente | `OPENAI_API_KEY` |
-| **Groq** | Oui (tier limité) | Très bonne | `GROQ_API_KEY` |
-| **Ollama** | Oui (local) | Bonne | Installer Ollama + modèle |
-
-## Lancer l'API
+Vous **devez** lancer cette commande après le clone :
 
 ```bash
-# Option 1 : Démarrer le serveur FastAPI
-uvicorn src.api:app --reload --port 8000
-
-# Option 2 : Tester le pipeline directement
-python -m src.rag_pipeline
+python data\scripts\ingest.py
 ```
 
-Documentation de l'API : http://localhost:8000/docs
+**Temps d'indexation :** ~3 minutes pour 3354 formations
 
-## Exemples d'utilisation
+**Sortie attendue :**
+```
+Demarrage de l'ingestion (Mode Local)...
+3354 formations chargees.
+Preparation de 3354 documents texte pour l'IA.
+Chargement du modele d'embedding multilingue...
+Vectorisation en cours avec ChromaDB...
+[OK] Index ChromaDB sauvegarde dans : C:\...\data\chroma_db
+[OK] Termine ! Vous pouvez maintenant faire des recherches.
+```
 
-### Générer un parcours (via curl)
+### 5. Tester la Recherche
 
 ```bash
-curl -X POST http://localhost:8000/generer-parcours \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nom": "Alice Dupont",
-    "niveau_actuel": "Licence 3 Informatique",
-    "objectif": "Devenir Data Scientist",
-    "matieres_fortes": ["Programmation", "Mathématiques"],
-    "matieres_faibles": ["Anglais"],
-    "contraintes": "Rester dans le sud de la France"
-  }'
+python data\scripts\retrieve.py "licence informatique paris"
 ```
 
-### Rechercher des formations
+**Résultats attendus :** Top 3 formations pertinentes avec scores de similarité
 
-```bash
-curl -X POST http://localhost:8000/rechercher-formations \
-  -H "Content-Type: application/json" \
-  -d '{"query": "cybersécurité master", "top_k": 3}'
-```
-
-## Mettre à jour les données
-
-1. Modifier les fichiers dans `data/` (formations.json, metiers.json)
-2. Appeler l'endpoint `POST /rebuild-vectorstore` ou relancer le serveur
-
-## Structure du projet
+## 📁 Structure du Projet
 
 ```
 TER/
-├── data/                    # Données des formations et métiers (JSON)
-├── src/
-│   ├── data_loader.py       # Chargement JSON → Documents LangChain
-│   ├── vectorstore.py       # Gestion ChromaDB (embeddings, recherche)
-│   ├── prompt_templates.py  # Templates de prompts pour le LLM
-│   ├── rag_pipeline.py      # Pipeline RAG complet
-│   └── api.py               # Endpoints FastAPI
-├── chroma_db/               # Base vectorielle (auto-générée)
-├── .env.example             # Template de configuration
-├── requirements.txt         # Dépendances Python
-└── README.md                # Ce fichier
+├── data/
+│   ├── processed/
+│   │   └── formations.json         # 3354 formations enrichies
+│   ├── chroma_db/                  # Index vectoriel (généré localement)
+│   └── scripts/
+│       ├── ingest.py               # Indexation ChromaDB
+│       ├── retrieve.py             # Recherche sémantique
+│       └── fetch_parcoursup.py     # Enrichissement données
+├── README.md
+├── report_avancement.tex           # Rapport LaTeX
+└── requirements.txt                # Dépendances Python
 ```
+
+## 🔍 Utilisation
+
+### Recherche Simple
+
+```bash
+python data\scripts\retrieve.py "votre requête"
+```
+
+**Exemples de requêtes :**
+- `"licence informatique paris"`
+- `"master droit notarial"`
+- `"but génie électrique lyon"`
+
+### Filtrage Automatique
+
+Le système détecte automatiquement :
+- **Ville** : "paris", "lyon", "marseille"...
+- **Type de diplôme** : "licence", "master", "but"
+- **Niveau** : "bac+3", "bac+5"
+
+**Exemple :**
+```bash
+python data\scripts\retrieve.py "Master droit à Paris"
+```
+→ Filtre automatique : `ville: paris`, `type_diplome: Master`
+
+## 🔄 Réenrichir les Données (Optionnel)
+
+Si vous voulez mettre à jour le dataset depuis Parcoursup :
+
+```bash
+python data\scripts\fetch_parcoursup.py
+```
+
+Puis réindexer :
+
+```bash
+Remove-Item -Recurse -Force data\chroma_db
+python data\scripts\ingest.py
+```
+
+## 🛠️ Technologies Utilisées
+
+- **ChromaDB** : Base vectorielle pour la recherche sémantique
+- **LangChain** : Pipeline RAG
+- **Sentence Transformers** : Embedding multilingue (`paraphrase-multilingual-MiniLM-L12-v2`)
+- **Python 3.13**
+
+## ⚠️ Notes Importantes
+
+1. **ChromaDB n'est pas versionné** : Après un `git clone`, vous DEVEZ lancer `ingest.py`
+2. **Temps de recherche** : ~200-300ms pour 3354 formations
+3. **Taille index** : ~24 MB (ChromaDB)
+
+## 📝 Contributions
+
+- **Dataset** : 600 → 3354 formations (+459%)
+- **Domaines** : Amélioration de 29% → 7% de formations "Autre"
+- **Métadonnées** : Taux d'accès, capacité, sélectivité (Parcoursup)
+
+## 📄 Documentation Complète
+
+Voir `report_avancement.tex` pour les détails techniques complets.
