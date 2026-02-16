@@ -1,0 +1,21 @@
+# Environnement
+.env
+__pycache__/
+*.pyc
+*.pyo
+
+# Base vectorielle (peut être reconstruite)
+chroma_db/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Venv
+venv/
+.venv/
+env/

@@ -1,0 +1,319 @@
+[
+    {
+        "id": "master-ia-paris-saclay",
+        "nom": "Master Intelligence Artificielle",
+        "etablissement": "Université Paris-Saclay",
+        "ville": "Paris",
+        "niveau_entree": "Licence Informatique ou équivalent (Bac+3)",
+        "duree": "2 ans",
+        "type_formation": "Master",
+        "domaine": "Informatique / Intelligence Artificielle",
+        "description": "Formation de pointe en intelligence artificielle couvrant le machine learning, le deep learning, le traitement du langage naturel et la vision par ordinateur. Forte composante recherche avec des laboratoires de renommée internationale.",
+        "prerequis_academiques": [
+            "Licence en Informatique, Mathématiques ou équivalent",
+            "Solides bases en programmation Python et algorithmique",
+            "Connaissances en statistiques, probabilités et algèbre linéaire",
+            "Moyenne générale recommandée : 13/20 minimum"
+        ],
+        "prerequis_administratifs": [
+            "Candidature via la plateforme MonMaster",
+            "Lettre de motivation détaillée",
+            "CV académique et professionnel",
+            "Relevés de notes L1 à L3",
+            "Attestation de niveau en anglais (B2 minimum recommandé)"
+        ],
+        "dates_cles": {
+            "ouverture_candidatures": "Mars",
+            "cloture_candidatures": "Mai",
+            "resultats_admission": "Juin-Juillet",
+            "rentree": "Septembre"
+        },
+        "competences_acquises": [
+            "Machine Learning et Deep Learning",
+            "Traitement du Langage Naturel (NLP)",
+            "Vision par ordinateur",
+            "Systèmes de recommandation",
+            "Éthique de l'IA",
+            "Recherche appliquée en IA"
+        ],
+        "debouches": [
+            "Data Scientist",
+            "Ingénieur Machine Learning",
+            "Chercheur en Intelligence Artificielle",
+            "Ingénieur NLP",
+            "Chef de projet IA"
+        ],
+        "salaire_moyen_sortie": "42000-55000€ brut/an",
+        "taux_insertion": "95% à 6 mois",
+        "defis_courants": [
+            "Forte sélectivité (taux d'acceptation environ 15%)",
+            "Charge de travail très élevée, surtout en M2",
+            "Stage de fin d'études obligatoire à trouver soi-même",
+            "Nécessité de maintenir un bon niveau en mathématiques"
+        ],
+        "alternatives": [
+            "Master Data Science - Université de Lyon",
+            "Master MIAGE parcours IA - Université Paris Dauphine",
+            "Master Informatique parcours Machine Learning - Sorbonne Université"
+        ],
+        "parcours_type": [
+            "Licence Informatique (3 ans)",
+            "Master 1 IA (1 an)",
+            "Master 2 IA + Stage (1 an)",
+            "Entrée sur le marché du travail ou Doctorat"
+        ]
+    },
+    {
+        "id": "licence-info-lyon",
+        "nom": "Licence Informatique",
+        "etablissement": "Université Claude Bernard Lyon 1",
+        "ville": "Lyon",
+        "niveau_entree": "Baccalauréat (Bac)",
+        "duree": "3 ans",
+        "type_formation": "Licence",
+        "domaine": "Informatique",
+        "description": "Formation généraliste en informatique couvrant la programmation, l'algorithmique, les bases de données, les réseaux et les systèmes d'exploitation. Prépare aux masters en informatique et aux écoles d'ingénieurs.",
+        "prerequis_academiques": [
+            "Baccalauréat général avec spécialités Mathématiques et/ou NSI recommandées",
+            "Bon niveau en mathématiques et logique",
+            "Capacité de raisonnement abstrait"
+        ],
+        "prerequis_administratifs": [
+            "Inscription via Parcoursup",
+            "Dossier scolaire (bulletins de Première et Terminale)",
+            "Lettre de motivation (projet de formation motivé)",
+            "Notes du Baccalauréat"
+        ],
+        "dates_cles": {
+            "ouverture_candidatures": "Janvier (Parcoursup)",
+            "cloture_candidatures": "Mars",
+            "resultats_admission": "Juin",
+            "rentree": "Septembre"
+        },
+        "competences_acquises": [
+            "Programmation (Python, Java, C)",
+            "Algorithmique et structures de données",
+            "Bases de données relationnelles (SQL)",
+            "Réseaux informatiques",
+            "Systèmes d'exploitation (Linux)",
+            "Développement web"
+        ],
+        "debouches": [
+            "Développeur logiciel (après poursuite d'études)",
+            "Technicien informatique",
+            "Poursuite en Master Informatique",
+            "Intégration en école d'ingénieurs (sur dossier)"
+        ],
+        "salaire_moyen_sortie": "28000-35000€ brut/an (si arrêt à Bac+3)",
+        "taux_insertion": "70% poursuivent en Master",
+        "defis_courants": [
+            "Transition lycée-université : autonomie requise",
+            "Niveau élevé en mathématiques dès la L1",
+            "Taux d'échec relativement élevé en première année (30-40%)",
+            "Nécessité de pratiquer régulièrement la programmation"
+        ],
+        "alternatives": [
+            "BUT Informatique (formation plus encadrée, 3 ans)",
+            "Licence Mathématiques-Informatique - Université de Montpellier",
+            "Classe préparatoire MP2I puis école d'ingénieurs"
+        ],
+        "parcours_type": [
+            "L1 Informatique - Fondamentaux",
+            "L2 Informatique - Approfondissement",
+            "L3 Informatique - Spécialisation",
+            "Poursuite en Master ou école d'ingénieurs"
+        ]
+    },
+    {
+        "id": "master-cybersecurite-bordeaux",
+        "nom": "Master Cybersécurité",
+        "etablissement": "Université de Bordeaux",
+        "ville": "Bordeaux",
+        "niveau_entree": "Licence Informatique ou équivalent (Bac+3)",
+        "duree": "2 ans",
+        "type_formation": "Master",
+        "domaine": "Informatique / Cybersécurité",
+        "description": "Formation spécialisée en sécurité des systèmes d'information, cryptographie, analyse de vulnérabilités et forensique numérique. Partenariats avec l'ANSSI et des entreprises du secteur.",
+        "prerequis_academiques": [
+            "Licence en Informatique ou équivalent",
+            "Connaissances en réseaux et systèmes d'exploitation",
+            "Bases en programmation (Python, C/C++)",
+            "Notions de cryptographie appréciées"
+        ],
+        "prerequis_administratifs": [
+            "Candidature via MonMaster",
+            "CV détaillé avec expériences techniques",
+            "Lettre de motivation axée sur la sécurité informatique",
+            "Relevés de notes",
+            "Certifications en sécurité informatique appréciées (MOOC, etc.)"
+        ],
+        "dates_cles": {
+            "ouverture_candidatures": "Mars",
+            "cloture_candidatures": "Mai",
+            "resultats_admission": "Juin",
+            "rentree": "Septembre"
+        },
+        "competences_acquises": [
+            "Sécurité des réseaux et systèmes",
+            "Cryptographie appliquée",
+            "Analyse de vulnérabilités et tests d'intrusion",
+            "Forensique numérique",
+            "Gestion des incidents de sécurité",
+            "Conformité et réglementation (RGPD, ISO 27001)"
+        ],
+        "debouches": [
+            "Analyste en cybersécurité",
+            "Pentester (testeur d'intrusion)",
+            "Responsable Sécurité des Systèmes d'Information (RSSI)",
+            "Consultant en sécurité informatique",
+            "Ingénieur DevSecOps"
+        ],
+        "salaire_moyen_sortie": "40000-50000€ brut/an",
+        "taux_insertion": "98% à 3 mois",
+        "defis_courants": [
+            "Domaine en évolution constante, nécessite une veille permanente",
+            "Certifications professionnelles recommandées en parallèle (CEH, OSCP)",
+            "Stages souvent en entreprises sensibles (habilitation parfois nécessaire)",
+            "Forte demande mais profils très spécialisés recherchés"
+        ],
+        "alternatives": [
+            "Master Sécurité Informatique - Université de Rennes",
+            "Mastère spécialisé Cybersécurité - ESIEA",
+            "Master Informatique parcours Sécurité - Université de Lille"
+        ],
+        "parcours_type": [
+            "Licence Informatique (3 ans)",
+            "Master 1 Cybersécurité (1 an)",
+            "Master 2 Cybersécurité + Stage en entreprise (1 an)",
+            "Certification professionnelle recommandée",
+            "Entrée sur le marché du travail"
+        ]
+    },
+    {
+        "id": "but-info-montpellier",
+        "nom": "BUT Informatique",
+        "etablissement": "IUT de Montpellier-Sète",
+        "ville": "Montpellier",
+        "niveau_entree": "Baccalauréat (Bac)",
+        "duree": "3 ans",
+        "type_formation": "BUT",
+        "domaine": "Informatique",
+        "description": "Formation universitaire technologique en informatique, avec un encadrement plus fort qu'en licence. Alternance possible dès la 2ème année. Quatre parcours de spécialisation : réalisation d'applications, déploiement, administration et gestion des données.",
+        "prerequis_academiques": [
+            "Baccalauréat général ou technologique (STI2D recommandé)",
+            "Spécialités Mathématiques et/ou NSI conseillées",
+            "Niveau correct en mathématiques",
+            "Intérêt démontré pour l'informatique"
+        ],
+        "prerequis_administratifs": [
+            "Inscription via Parcoursup",
+            "Dossier scolaire complet",
+            "Projet de formation motivé",
+            "Formation sélective : dossier examiné attentivement"
+        ],
+        "dates_cles": {
+            "ouverture_candidatures": "Janvier (Parcoursup)",
+            "cloture_candidatures": "Mars",
+            "resultats_admission": "Juin",
+            "rentree": "Septembre"
+        },
+        "competences_acquises": [
+            "Développement d'applications web et mobiles",
+            "Bases de données et SQL",
+            "Administration systèmes et réseaux",
+            "Gestion de projet informatique",
+            "Programmation orientée objet",
+            "Travail en équipe et méthodologie Agile"
+        ],
+        "debouches": [
+            "Développeur web/mobile",
+            "Administrateur systèmes et réseaux",
+            "Technicien informatique",
+            "Poursuite en école d'ingénieurs",
+            "Poursuite en Master Informatique"
+        ],
+        "salaire_moyen_sortie": "27000-33000€ brut/an",
+        "taux_insertion": "85% (emploi ou poursuite d'études)",
+        "defis_courants": [
+            "Rythme soutenu avec contrôle continu",
+            "Projets en groupe fréquents",
+            "Trouver une alternance si choix de ce parcours",
+            "Choix du parcours de spécialisation en 2ème année"
+        ],
+        "alternatives": [
+            "Licence Informatique - formation plus théorique",
+            "BTS SIO (SLAM ou SISR) - formation en 2 ans",
+            "École d'ingénieurs post-bac (INSA, UTC, etc.)"
+        ],
+        "parcours_type": [
+            "BUT 1 - Tronc commun informatique",
+            "BUT 2 - Choix de parcours + alternance possible",
+            "BUT 3 - Spécialisation + stage/alternance",
+            "Poursuite en Master ou école d'ingénieurs, ou emploi direct"
+        ]
+    },
+    {
+        "id": "master-data-science-toulouse",
+        "nom": "Master Data Science",
+        "etablissement": "Université Toulouse III - Paul Sabatier",
+        "ville": "Toulouse",
+        "niveau_entree": "Licence Mathématiques, Informatique ou équivalent (Bac+3)",
+        "duree": "2 ans",
+        "type_formation": "Master",
+        "domaine": "Mathématiques / Informatique / Data Science",
+        "description": "Formation interdisciplinaire combinant statistiques avancées, machine learning et big data. Forte orientation vers les applications industrielles avec des partenariats Airbus, Thales et startups locales.",
+        "prerequis_academiques": [
+            "Licence en Mathématiques, Informatique ou MIASHS",
+            "Solides compétences en statistiques et probabilités",
+            "Maîtrise de Python et/ou R",
+            "Bases en algèbre linéaire et analyse"
+        ],
+        "prerequis_administratifs": [
+            "Candidature via MonMaster",
+            "Lettre de motivation",
+            "CV détaillé",
+            "Relevés de notes L1 à L3",
+            "Portfolio de projets data appréciés"
+        ],
+        "dates_cles": {
+            "ouverture_candidatures": "Mars",
+            "cloture_candidatures": "Mai",
+            "resultats_admission": "Juin",
+            "rentree": "Septembre"
+        },
+        "competences_acquises": [
+            "Statistiques avancées et modélisation",
+            "Machine Learning supervisé et non supervisé",
+            "Big Data (Hadoop, Spark)",
+            "Visualisation de données",
+            "Deep Learning",
+            "Bases de données NoSQL"
+        ],
+        "debouches": [
+            "Data Scientist",
+            "Data Analyst",
+            "Data Engineer",
+            "Statisticien",
+            "Consultant en Business Intelligence"
+        ],
+        "salaire_moyen_sortie": "38000-48000€ brut/an",
+        "taux_insertion": "92% à 6 mois",
+        "defis_courants": [
+            "Double compétence math/info nécessaire",
+            "Projets industriels exigeants en M2",
+            "Maîtrise de multiples outils (Python, R, SQL, Spark...)",
+            "Veille technologique continue sur les nouvelles méthodes"
+        ],
+        "alternatives": [
+            "Master Intelligence Artificielle - Paris-Saclay",
+            "Master SIAD - Université de Lyon 2",
+            "Mastère spécialisé Big Data - Télécom Paris"
+        ],
+        "parcours_type": [
+            "Licence Mathématiques ou Informatique (3 ans)",
+            "Master 1 Data Science (1 an)",
+            "Master 2 Data Science + Stage industriel (1 an)",
+            "Entrée sur le marché du travail"
+        ]
+    }
+]
