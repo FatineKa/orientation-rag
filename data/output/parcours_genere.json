@@ -1,0 +1,28 @@
+[
+  {
+    "etape": {
+      "nom": "Master (Bac+5)",
+      "niveau_sortie": 5,
+      "type_diplome": "Master",
+      "description": "Spécialisation pour votre objectif professionnel"
+    },
+    "formations": [
+      {
+        "rang": 1,
+        "score": 1.0178953409194946,
+        "nom": "Master Mathématiques, données et apprentissage - Ingénerie mathématiques et biostatistique",
+        "ville": "PARIS",
+        "etablissement": "Université de Paris",
+        "url": ""
+      },
+      {
+        "rang": 2,
+        "score": 1.0754854679107666,
+        "nom": "Master Informatique fondamentale et appliquée - Cryptographie - Sécurité",
+        "ville": "PARIS",
+        "etablissement": "Université de Paris",
+        "url": ""
+      }
+    ]
+  }
+]
