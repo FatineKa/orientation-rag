@@ -1,0 +1,61 @@
+Karim Messaoudi karim.messaoudi@etud.univ-paris.fr
++33 6 78 23 45 61
+Paris, France
+Étudiant en L2 Informatique — Université Paris Cité
+CONTRAINTES DE RECHERCHE
+Ville souhaitée : Paris ou Île-de-France
+Niveau visé : Licence (Bac+3)
+Type de formation : Licence
+Budget : Public uniquement
+— Zone lue par le système de filtrage — ne pas modifier le format des lignes ci-dessus —
+OBJECTIF PROFESSIONNEL
+Étudiant en deuxième année de Licence Informatique, je suis attiré par la science des données et l'analyse de données.
+Je souhaite intégrer une Licence en Informatique ou Data Science à Paris pour ma troisième année, puis poursuivre en
+Master Intelligence Artificielle ou Data Science. Je cherche une formation alliant théorie solide et projets pratiques,
+idéalement avec des partenariats industriels ou des stages intégrés.
+EXPÉRIENCES
+Été 2025 · 4 sem. Stage d'observation — Association NumériqueEdu
+Paris 11e
+– Animation d'ateliers d'initiation à Python pour des collégiens : variables, boucles, conditions.
+– Rédaction de fiches pédagogiques simples et claires adaptées à un public débutant.
+– Organisation des sessions avec l'outil de gestion de projet Trello.
+– Découverte du travail associatif et de la coordination en équipe bénévole.
+Jan. 2025 · 2 sem. Job étudiant — Opérateur de saisie de données
+Cabinet Dubois & Associés, Paris
+– Saisie et vérification de données clients dans un tableur Excel (environ 2 000 lignes).
+– Détection et correction d'anomalies et d'incohérences dans les fichiers de données.
+– Découverte de l'importance de la qualité des données dans un contexte professionnel.
+PROJETS UNIVERSITAIRES
+Nov. 2024 Gestion de bibliothèque — Projet Java (binôme)
+Université Paris Cité
+– Développement d'une application console : ajout, recherche et emprunt de livres.
+– Conception orientée objet : classes, héritage, encapsulation, ArrayList.
+– Versionnement avec Git et GitHub, revue de code entre binômes.
+Mars 2024 Analyse de données Titanic — Projet Python (binôme)
+Université Paris Cité
+– Exploration et nettoyage du dataset Titanic avec Pandas (valeurs manquantes, types, doublons).
+– Statistiques descriptives et visualisation avec Matplotlib : histogrammes, boîtes à moustaches, corrélations.
+– Rapport écrit de 8 pages et présentation orale devant la promotion.
+FORMATION
+2023 — En cours L2 Informatique — Parcours Data & IA
+Université Paris Cité, Faculté des Sciences
+– Moyenne générale : 13,5 / 20.
+– Algorithmique et structures de données : 14/20. Programmation Java orientée objet : 13/20.
+– Bases de données SQL : 15/20. Introduction au Machine Learning : 12/20. Probabilités et Statistiques : 12/20.
+2021 — 2022 Baccalauréat Général — Mathématiques & NSI
+Lycée Henri-IV, Paris
+– Mention Bien — 14,6 / 20.
+COMPÉTENCES TECHNIQUES
+Langages : Python (intermédiaire), Java (intermédiaire), SQL (intermédiaire), HTML/CSS (notions), C (notions)
+Librairies : Pandas, Matplotlib, NumPy (notions), Scikit-learn (notions)
+Outils : Git, GitHub, VS Code, Jupyter Notebook, Excel, Trello
+Méthodes : Programmation orientée objet, modélisation UML (bases), analyse exploratoire de données
+LANGUES
+Français : Langue maternelle
+Arabe : Bilingue (héritage familial)
+Anglais : B1 — Lecture de documentation technique en anglais, compréhension de cours en ligne (Coursera, Kaggle)
+CENTRES D'INTÉRÊT
+Data Science : Suivi de tutoriels Kaggle sur la classification et la régression. Intérêt pour le nettoyage et la visualisation
+de données réelles.
+Jeux vidéo : Curiosité pour la logique algorithmique et les systèmes de décision dans les moteurs de jeu.
+Football : Pratique en équipe universitaire, développement de l'esprit collectif et de la communication.

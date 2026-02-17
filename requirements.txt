@@ -12,6 +12,9 @@ sentence-transformers>=3.0.0
 langchain-huggingface>=0.1.0
 faiss-cpu>=1.13.0  # For FAISS vector store
 
+# PDF Processing
+pdfplumber>=0.11.0  # For extracting text from PDF forms
+
 # API Backend
 fastapi>=0.115.0
 uvicorn>=0.32.0
