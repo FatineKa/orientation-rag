@@ -1,35 +1,31 @@
-"""
-vectorstore.py — Gestion de la base vectorielle ChromaDB
-
-Ce module gère la création, le chargement et la recherche dans la base
-vectorielle qui stocke les embeddings des documents (formations, métiers).
-"""
+# vectorstore.py
+# Gestion de la base vectorielle ChromaDB
+# Permet de creer, charger et interroger l'index des formations
 
 import os
 from pathlib import Path
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configuration par défaut
-CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+# Chemins et parametres par defaut
+_PROJECT_DIR = Path(__file__).parent.parent
+CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", str(_PROJECT_DIR / "data" / "chroma_db"))
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "50"))
 
 
 def get_embeddings(model_name: str = None) -> HuggingFaceEmbeddings:
     """
-    Crée et retourne le modèle d'embedding.
-
-    Le modèle all-MiniLM-L6-v2 est léger (~80MB) et gratuit.
-    Il tourne en local, pas besoin d'API.
+    Charge le modele d'embedding multilingue.
+    Le modele tourne en local, pas besoin d'API externe.
     """
     model_name = model_name or EMBEDDING_MODEL
     return HuggingFaceEmbeddings(
@@ -41,11 +37,9 @@ def get_embeddings(model_name: str = None) -> HuggingFaceEmbeddings:
 
 def decouper_documents(documents: list[Document]) -> list[Document]:
     """
-    Découpe les documents en chunks plus petits pour une meilleure
-    recherche vectorielle.
-
-    Pour les fiches formations qui sont déjà assez courtes,
-    on les garde telles quelles si elles font moins de CHUNK_SIZE caractères.
+    Decoupe les documents longs en morceaux (chunks) plus petits
+    pour ameliorer la recherche vectorielle.
+    Les documents courts sont gardes tels quels.
     """
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
@@ -57,17 +51,14 @@ def decouper_documents(documents: list[Document]) -> list[Document]:
     chunks = []
     for doc in documents:
         if len(doc.page_content) <= CHUNK_SIZE:
-            # Le document est assez court, on le garde tel quel
             chunks.append(doc)
         else:
-            # On découpe en morceaux
             sous_docs = splitter.split_documents([doc])
-            # On propage les métadonnées du parent
             for sd in sous_docs:
                 sd.metadata.update(doc.metadata)
             chunks.extend(sous_docs)
 
-    print(f"→ {len(documents)} documents découpés en {len(chunks)} chunks")
+    print(f"  {len(documents)} documents decoupes en {len(chunks)} chunks")
     return chunks
 
 
@@ -77,23 +68,16 @@ def creer_vectorstore(
     embeddings=None,
 ) -> Chroma:
     """
-    Crée une nouvelle base vectorielle ChromaDB à partir des documents.
-
-    Args:
-        documents: Liste de Documents LangChain à indexer
-        persist_dir: Dossier où persister la base (par défaut: ./chroma_db)
-        embeddings: Modèle d'embedding (par défaut: all-MiniLM-L6-v2)
-
-    Returns:
-        Instance ChromaDB prête pour la recherche
+    Cree une nouvelle base vectorielle ChromaDB a partir des documents.
+    Les embeddings sont generes et stockes sur disque.
     """
     persist_dir = persist_dir or CHROMA_PERSIST_DIR
     embeddings = embeddings or get_embeddings()
 
-    # Découper les documents
+    # Decouper les documents
     chunks = decouper_documents(documents)
 
-    # Créer la base vectorielle
+    # Creer la base vectorielle
     vectorstore = Chroma.from_documents(
         documents=chunks,
         embedding=embeddings,
@@ -101,7 +85,7 @@ def creer_vectorstore(
         collection_name="orientation_formations",
     )
 
-    print(f"✓ Base vectorielle créée avec {len(chunks)} chunks dans {persist_dir}")
+    print(f"  Base vectorielle creee avec {len(chunks)} chunks dans {persist_dir}")
     return vectorstore
 
 
@@ -110,14 +94,8 @@ def charger_vectorstore(
     embeddings=None,
 ) -> Chroma:
     """
-    Charge une base vectorielle existante.
-
-    Args:
-        persist_dir: Dossier où la base est persistée
-        embeddings: Modèle d'embedding (doit être le même que lors de la création)
-
-    Returns:
-        Instance ChromaDB chargée
+    Charge une base vectorielle existante depuis le disque.
+    Le modele d'embedding doit etre le meme que lors de la creation.
     """
     persist_dir = persist_dir or CHROMA_PERSIST_DIR
     embeddings = embeddings or get_embeddings()
@@ -125,7 +103,7 @@ def charger_vectorstore(
     if not Path(persist_dir).exists():
         raise FileNotFoundError(
             f"Base vectorielle introuvable dans {persist_dir}. "
-            "Exécutez d'abord la création avec creer_vectorstore()."
+            "Executez d'abord la creation avec creer_vectorstore()."
         )
 
     vectorstore = Chroma(
@@ -134,20 +112,14 @@ def charger_vectorstore(
         collection_name="orientation_formations",
     )
 
-    print(f"✓ Base vectorielle chargée depuis {persist_dir}")
+    print(f"  Base vectorielle chargee depuis {persist_dir}")
     return vectorstore
 
 
 def get_retriever(vectorstore: Chroma, top_k: int = None):
     """
-    Crée un retriever à partir de la base vectorielle.
-
-    Args:
-        vectorstore: Instance ChromaDB
-        top_k: Nombre de documents à retourner (par défaut: 5)
-
-    Returns:
-        Retriever LangChain configuré
+    Cree un retriever LangChain a partir de la base vectorielle.
+    Le retriever retourne les top_k documents les plus similaires.
     """
     top_k = top_k or int(os.getenv("TOP_K_DOCUMENTS", "5"))
     return vectorstore.as_retriever(
@@ -158,17 +130,16 @@ def get_retriever(vectorstore: Chroma, top_k: int = None):
 
 def initialiser_vectorstore(data_dir: str = None, persist_dir: str = None) -> Chroma:
     """
-    Fonction utilitaire : charge les données et crée la base vectorielle.
-    
-    Si la base existe déjà, la recharge. Sinon, la crée depuis les données.
+    Charge la base vectorielle si elle existe,
+    sinon la cree a partir des donnees.
     """
     persist_dir = persist_dir or CHROMA_PERSIST_DIR
 
     if Path(persist_dir).exists():
-        print("Base vectorielle existante trouvée, chargement...")
+        print("Base vectorielle existante trouvee, chargement...")
         return charger_vectorstore(persist_dir)
     
-    print("Création d'une nouvelle base vectorielle...")
+    print("Creation d'une nouvelle base vectorielle...")
     from src.data_loader import charger_documents
     documents = charger_documents(data_dir)
     return creer_vectorstore(documents, persist_dir)

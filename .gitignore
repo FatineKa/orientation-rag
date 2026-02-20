@@ -19,3 +19,5 @@ Thumbs.db
 venv/
 .venv/
 env/
+_enrichment_checkpoint.json
+data/chroma_db/

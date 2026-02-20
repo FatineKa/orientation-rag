@@ -12,6 +12,9 @@ sentence-transformers>=3.0.0
 langchain-huggingface>=0.1.0
 faiss-cpu>=1.13.0  # For FAISS vector store
 
+# LLM Providers
+langchain-groq>=0.2.0  # Pour Groq (gratuit, Llama 3)
+
 # PDF Processing
 pdfplumber>=0.11.0  # For extracting text from PDF forms
 
