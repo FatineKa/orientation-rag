@@ -27,15 +27,33 @@ REGLE : le parcours doit d'abord consolider le domaine actuel, PUIS introduire
 une ETAPE PASSERELLE progressive vers le domaine cible si necessaire.
 
 Exemple : etudiant en Terminale qui veut devenir Data Analyst :
-  - L1 : L1 Mathematiques-Informatique (bases)
-  - L2 : L2 Mathematiques-Informatique (approfondissement)
-  - L3 : L3 Informatique parcours Data (specialisation)
-  - M1 : M1 Data Science (passerelle vers l'objectif)
-  - M2 : M2 Data Science et Intelligence Artificielle (objectif atteint)
+  - L1 : L1 Mathematiques-Informatique (bases fondamentales)
+  - L2 : L2 Mathematiques-Informatique (approfondissement et specialisation progressive)
+  - L3 : L3 Informatique parcours Data (specialisation et preparation au Master)
+  - M1 : M1 Data Science (passerelle vers l'objectif — premiere annee de recherche/projet)
+  - M2 : M2 Data Science et Intelligence Artificielle (objectif atteint — stage de fin d'etudes)
 
 Chaque annee (L1, L2, L3, M1, M2) est une etape distincte avec un intitule de formation different.
 NE JAMAIS regrouper L1+L2 ou L2+L3 en une seule etape.
 NE JAMAIS faire un saut brutal de domaine. Chaque etape doit etre accessible depuis la precedente.
+
+=== DESCRIPTIONS DISTINCTES PAR ANNEE (TRES IMPORTANT) ===
+Meme si L1/L2/L3 sont dans la MEME Licence, chaque annee a un contenu DIFFERENT.
+Tu DOIS donner des descriptions, competences, objectifs et conseils DIFFERENTS pour chaque annee :
+
+LICENCE (L1/L2/L3 = meme programme mais 3 annees distinctes) :
+- L1 : Annee de decouverte et fondamentaux. Decrire les matieres de base, l'adaptation a l'universite,
+  les methodes de travail. Conseils : s'organiser, trouver son rythme, identifier les matieres cles.
+- L2 : Annee d'approfondissement. Decrire les matieres specifiques qui se rajoutent, les projets,
+  les premieres specialisations. Conseils : commencer a viser un parcours en L3, stages exploratoires.
+- L3 : Annee de specialisation. Decrire le parcours choisi, la preparation au Master, le projet
+  de fin de Licence. Conseils : preparer les candidatures Master (MonMaster), valoriser son profil.
+
+MASTER (M1/M2 = meme programme mais 2 annees distinctes) :
+- M1 : Theorie avancee + premiere recherche. Decrire les cours avances, les projets de recherche,
+  le memoire de M1. Conseils : identifier le directeur de memoire, constituer un reseau.
+- M2 : Professionnalisation + stage long. Decrire le stage de 4-6 mois, le memoire de fin d'etudes,
+  la preparation a l'insertion professionnelle. Conseils : postuler aux stages des octobre, networking.
 
 Progression obligatoire selon le cycle :
 - Cycle universitaire : {niveau_actuel} -> ... -> M2
@@ -56,10 +74,23 @@ les DERNIERES etapes montrent des formations proches de l'objectif final.
 Utilise UNIQUEMENT ces formations pour le champ "options". N'invente aucune formation.
 {formations_disponibles}
 
-=== ANALYSE DES NOTES ===
-- Note >= 14/20 : matiere forte -> formations exigeantes accessibles
-- Note 10-13/20 : niveau moyen -> formations moderement exigeantes
-- Note < 10/20  : matiere faible -> EVITER formations qui l'exigent
+=== ANALYSE DES NOTES ET DU PROFIL COMPLET (TRES IMPORTANT) ===
+Tu DOIS analyser chaque variable du profil pour personnaliser le parcours :
+
+NOTES PAR MATIERE (critere principal pour les recommandations) :
+- Note >= 14/20 : matiere forte -> formations selectives accessibles, Masters competitifs
+- Note 10-13/20 : niveau correct -> formations moderement selectives
+- Note < 10/20  : matiere faible -> EVITER formations qui exigent cette matiere
+- Moyenne generale >= 14 : peut viser les Masters les plus reputes (Paris, Lyon, Grenoble...)
+- Moyenne generale < 12  : privilegier des Masters moins selectifs ou parcours alternatifs
+
+COMPETENCES TECHNIQUES : valoriser dans les conseils d'etape (ex: Python → avantage en Data Science)
+QUALITES PERSONNELLES : adapter les conseils (ex: Rigoureux → bon pour la recherche)
+EXPERIENCES/STAGES : adapter le niveau de difficulte et les conseils pratiques
+BUDGET : si "Public uniquement" → ne proposer QUE des universites publiques
+TYPE DE FORMATION : si "Alternance" → mentionner les parcours en alternance disponibles
+CONTRAINTES GEO : respecter strictement pour L1/L2/L3. M1/M2 peuvent etre ailleurs.
+CENTRES D'INTERET : orienter les conseils et suggestions d'activites complementaires
 
 === REGLES DE PROGRESSION ===
 1. Partir EXACTEMENT de {niveau_actuel}. Ne jamais revenir en arriere.

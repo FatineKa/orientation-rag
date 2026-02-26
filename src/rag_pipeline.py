@@ -417,6 +417,7 @@ class PipelineRAG:
                 "ville": ville,
                 "etablissement": etab,
                 "duree": meta.get("duree", ""),
+                "url": meta.get("url", ""),
                 "extrait": doc.page_content[:300],
                 "contenu_complet": doc.page_content,
             })
@@ -818,46 +819,100 @@ class PipelineRAG:
 
         return parcours
 
+    def _moyenne_notes(self, profil: dict) -> float:
+        """Calcule la moyenne des notes de l'etudiant (exclut les 0)."""
+        notes = profil.get("notes_par_matiere", {})
+        vals = [v for v in notes.values() if isinstance(v, (int, float)) and v > 0]
+        return sum(vals) / len(vals) if vals else 10.0
+
     def _rechercher_master_par_objectif(self, objectif: str, profil: dict, top_k: int = 10) -> list:
         """
         Recherche des Masters pertinents pour l'objectif de carriere de l'etudiant.
-        Strategie : recherche semantique large centree sur l'objectif + le metier vise,
+
+        Scoring multi-criteres (score plus bas = meilleur) :
+        1. Pertinence debouches : objectif de carriere vs debouches du Master
+        2. Pertinence nom       : le nom du Master evoque le metier vise
+        3. Bonus Paris          : Masters parisiens ponderes favorablement
+        4. Notes de l'etudiant  : bonne moyenne -> acces Masters selectifs
+        5. Budget               : "Public uniquement" -> penalise les prives
+        6. Competences techniques : bonus si les competences matchent le contenu
+
         SANS contrainte geographique (l'etudiant bouge apres la Licence).
         """
         domaine = " ".join(profil.get("domaines_etudes_preferes", []))
-        # Requete ciblee sur l'objectif professionnel
         requete = f"Master {objectif} {domaine}"
 
         profil_national = {**profil, "contraintes_geographiques": ""}
         docs = self._rechercher_docs_bruts(requete, profil_national, over_fetch=200)
         docs = self._filtrer_par_type(docs, {"Master"})
 
-        # Re-ranking : prioriser les Masters dont les debouches correspondent a l'objectif
+        # Variables du profil pour le scoring
         objectif_lower = objectif.lower().strip()
         objectif_mots = set(objectif_lower.split())
+        moyenne = self._moyenne_notes(profil)
+        budget = profil.get("budget", "").lower()
+        competences = [c.lower() for c in profil.get("competences_techniques", [])]
 
         def score_master(doc):
-            debouches_raw = doc.metadata.get("debouches_metiers", "")
+            meta = doc.metadata
+            debouches_raw = meta.get("debouches_metiers", "")
             if isinstance(debouches_raw, str):
                 debouches = debouches_raw.lower()
             else:
                 debouches = " ".join(debouches_raw).lower() if debouches_raw else ""
-            nom = doc.metadata.get("nom", "").lower()
+            nom = meta.get("nom", "").lower()
+            ville = (meta.get("ville", "") or "").lower()
+            contenu = doc.page_content.lower()
 
-            # Score 0 = meilleur
-            # Match exact de l'objectif dans les debouches
+            # --- 1. Score pertinence debouches (0-30) ---
             if objectif_lower in debouches:
-                return 0
-            # Match partiel (mots de l'objectif dans debouches)
-            mots_trouves = sum(1 for m in objectif_mots if m in debouches)
-            if mots_trouves > 0:
-                return 1
-            # Match dans le nom de la formation
-            if any(m in nom for m in objectif_mots):
-                return 2
-            return 3
+                score_pert = 0              # Match exact du metier dans les debouches
+            elif sum(1 for m in objectif_mots if m in debouches) >= 2:
+                score_pert = 5              # Plusieurs mots matchent
+            elif any(m in debouches for m in objectif_mots):
+                score_pert = 10             # Au moins un mot
+            elif any(m in nom for m in objectif_mots):
+                score_pert = 15             # Match dans le nom du Master
+            elif any(m in contenu for m in objectif_mots):
+                score_pert = 20             # Match dans le contenu complet
+            else:
+                score_pert = 30             # Aucun match
+
+            # --- 2. Bonus Paris (-3) ---
+            # Masters parisiens = meilleur reseau, plus de debouches, reputation
+            villes_paris = ["paris", "saclay", "nanterre", "creteil", "sceaux",
+                            "orsay", "guyancourt", "villetaneuse", "saint-denis"]
+            bonus_paris = -3 if any(v in ville for v in villes_paris) else 0
+
+            # --- 3. Ajustement notes ---
+            # Bonne moyenne : acces aux Masters selectifs sans penalite
+            # Moyenne faible : on penalise pour proposer des Masters plus accessibles
+            if moyenne >= 14:
+                ajust_notes = 0
+            elif moyenne >= 12:
+                ajust_notes = 2
+            else:
+                ajust_notes = 5
+
+            # --- 4. Budget : penaliser prive si "Public uniquement" ---
+            budget_pen = 0
+            if "public uniquement" in budget:
+                modalite = (meta.get("modalite", "") or "").lower()
+                if "priv" in modalite:
+                    budget_pen = 50
+
+            # --- 5. Bonus competences techniques (-1 par match, max -5) ---
+            bonus_comp = 0
+            for comp in competences:
+                if comp in contenu or comp in nom:
+                    bonus_comp -= 1
+            bonus_comp = max(bonus_comp, -5)
+
+            return score_pert + bonus_paris + ajust_notes + budget_pen + bonus_comp
 
         docs = sorted(docs, key=score_master)
+        print(f"  Masters trouves : {len(docs)} | Top-3 scores : "
+              f"{[score_master(d) for d in docs[:3]] if docs else 'aucun'}")
         return self._docs_vers_formations(docs, top_k)
 
     def _nettoyer_json(self, contenu: str) -> str:

@@ -386,8 +386,6 @@ if "formation_choisie" not in st.session_state:
     st.session_state["formation_choisie"] = None
 if "parcours" not in st.session_state:
     st.session_state["parcours"] = None
-if "choix_etapes" not in st.session_state:
-    st.session_state["choix_etapes"] = {}
 
 
 # --- PHASE 1 : Explorer les formations ---
@@ -397,7 +395,6 @@ if st.button("Explorer les formations", type="primary", use_container_width=True
     # Reinitialiser les etats
     st.session_state["formation_choisie"] = None
     st.session_state["parcours"] = None
-    st.session_state["choix_etapes"] = {}
 
     pipeline = charger_pipeline()
     top_k = int(os.getenv("TOP_K_DOCUMENTS", "8"))
@@ -444,11 +441,18 @@ if formations and not st.session_state.get("parcours"):
         with st.container():
             col_info, col_btn = st.columns([4, 1])
             with col_info:
+                url_f = f.get("url", "")
+                parcoursup_badge = (
+                    f"&nbsp;<a href='{url_f}' target='_blank' style='background:#f97316;color:white;"
+                    f"padding:1px 7px;border-radius:9999px;font-size:0.7em;font-weight:600;"
+                    f"text-decoration:none;'>Parcoursup ↗</a>"
+                    if url_f else ""
+                )
                 st.markdown(f"""
 <div class="step-card">
-    <strong>{f.get('nom', 'Formation')}</strong>
+    <strong>{f.get('nom', 'Formation')}</strong>{parcoursup_badge}
     <br><em>{f.get('type', '')} &nbsp;&bull;&nbsp; {f.get('domaine', '')}</em>
-    <br><small>Etablissement : {f.get('etablissement', '?')} &nbsp;|&nbsp; Ville : {f.get('ville', '?')} &nbsp;|&nbsp; Duree : {f.get('duree', '?')}</small>
+    <br><small>🏛️ {f.get('etablissement', '?')} &nbsp;|&nbsp; 📍 {f.get('ville', '?')} &nbsp;|&nbsp; ⏱️ {f.get('duree', '?')}</small>
 </div>
                 """, unsafe_allow_html=True)
                 if f.get("extrait"):
@@ -479,7 +483,6 @@ if parcours and formation_choisie:
         if st.button("← Changer de formation", use_container_width=True):
             st.session_state["parcours"] = None
             st.session_state["formation_choisie"] = None
-            st.session_state["choix_etapes"] = {}
             st.rerun()
 
     # Banniere formation choisie + objectif
@@ -510,20 +513,12 @@ if parcours and formation_choisie:
     if parcours.get("etapes"):
         etapes = parcours["etapes"]
         nb_etapes = len(etapes)
-        choix = st.session_state.get("choix_etapes", {})
 
         st.markdown(f"### Ton parcours — {nb_etapes} etapes")
         st.caption("A chaque etape, choisis la formation qui te correspond pour adapter la suite du parcours")
 
         for idx, etape in enumerate(etapes):
             num = etape.get("numero", idx + 1)
-            choix_fait = choix.get(str(num))
-
-            # Indicateur de progression
-            if choix_fait:
-                indicateur = "✅"
-            else:
-                indicateur = f"**{num}**"
 
             with st.container():
                 # Formation réelle recommandée pour cette étape (1ère de la liste)
@@ -536,13 +531,20 @@ if parcours and formation_choisie:
                     etab_f  = formation_recommandee.get("etablissement", "")
                     ville_f = formation_recommandee.get("ville", "")
                     desc_f  = formation_recommandee.get("description", "")
+                    url_f   = formation_recommandee.get("url", "")
                     type_badge = f"<span style='background:#e8f4fd;color:#1a73e8;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:600;'>{type_f}</span>&nbsp;" if type_f else ""
+                    parcoursup_badge = (
+                        f"&nbsp;<a href='{url_f}' target='_blank' style='background:#f97316;color:white;"
+                        f"padding:2px 7px;border-radius:9999px;font-size:0.7em;font-weight:600;"
+                        f"text-decoration:none;'>Parcoursup ↗</a>"
+                        if url_f else ""
+                    )
                     etab_html  = f"<br><small>🏛️ <strong>{etab_f}</strong> &nbsp;|&nbsp; 📍 {ville_f}</small>" if etab_f else ""
                     desc_html  = f"<br><small style='color:#555;font-style:italic;'>{desc_f}</small>" if desc_f else ""
                     st.markdown(f"""
 <div class="step-card">
     <small>Etape {num} &nbsp;|&nbsp; {etape.get('duree', '')} &nbsp;|&nbsp; {etape.get('periode', '')}</small>
-    <br>{type_badge}<strong>{nom_f}</strong>
+    <br>{type_badge}<strong>{nom_f}</strong>{parcoursup_badge}
     {etab_html}{desc_html}
 </div>
                     """, unsafe_allow_html=True)
@@ -551,14 +553,16 @@ if parcours and formation_choisie:
                         with st.expander(f"Voir {len(options)-1} autre(s) formation(s) disponible(s)"):
                             for opt in options[1:]:
                                 type_o = opt.get("type_diplome", "")
+                                url_o  = opt.get("url", "")
+                                lien_o = f" &nbsp;[↗ Parcoursup]({url_o})" if url_o else ""
                                 st.markdown(
                                     f"- **{opt.get('nom','')}** — {type_o} &nbsp;|&nbsp; "
-                                    f"🏛️ {opt.get('etablissement','?')} &nbsp;|&nbsp; 📍 {opt.get('ville','?')}"
+                                    f"🏛️ {opt.get('etablissement','?')} &nbsp;|&nbsp; 📍 {opt.get('ville','?')}{lien_o}"
                                 )
                 else:
                     st.markdown(f"""
 <div class="step-card">
-    <strong>Etape {indicateur} — {etape.get('titre', '')}</strong>
+    <strong>Etape {num} — {etape.get('titre', '')}</strong>
     <br><small>Duree : {etape.get('duree', '?')} &nbsp;|&nbsp; {etape.get('periode', '')}</small>
 </div>
                     """, unsafe_allow_html=True)
