@@ -160,86 +160,92 @@ with st.sidebar:
         ["Terminale Generale", "Terminale Technologique", "Terminale Professionnelle",
          "L1", "L2", "L3", "M1", "M2", "BTS", "BUT / DUT", "Prepa"],
     )
-    # Liste des objectifs professionnels par domaine
+    # Liste des objectifs professionnels par domaine — extraite des débouchés réels de la base Parcoursup
     OBJECTIFS_PAR_DOMAINE = {
-        "Data Science / IA": [
-            "Data Scientist", "Data Analyst", "Data Engineer",
-            "Ingenieur Machine Learning", "Ingenieur IA",
-            "Chercheur en IA", "Analyste Business Intelligence",
+        "Arts, Culture et Création": [
+            "Conservateur de musée", "Critique d'art", "Guide conférencier",
+            "Réalisateur", "Artiste plasticien", "Designer",
+            "Critique de cinéma", "Metteur en scène", "Directeur artistique",
+            "Monteur vidéo", "Musicologue", "Historien de l'art",
+            "Chargé de projet culturel", "Médiateur culturel", "Graphiste",
         ],
-        "Informatique / Dev": [
-            "Developpeur Web", "Developpeur Mobile", "Developpeur Full Stack",
-            "Ingenieur Logiciel", "DevOps Engineer", "Architecte Logiciel",
-            "Administrateur Systemes et Reseaux", "Ingenieur Cybersecurite",
-            "Chef de Projet IT", "Testeur / QA Engineer",
+        "Communication et Médias": [
+            "Chargé de communication", "Community manager", "Journaliste",
+            "Webdesigner", "Designer graphique", "Attaché de presse",
+            "Webmaster", "Chargé de communication digitale",
+            "Consultant en communication", "Développeur web",
+            "Bibliothécaire", "Rédacteur web", "Documentaliste",
         ],
-        "Economie": [
-            "Economiste", "Analyste Financier", "Charge d'etudes economiques",
-            "Conseiller en politique economique", "Statisticien economiste",
+        "Droit et Sciences Juridiques": [
+            "Avocat", "Notaire", "Juriste d'entreprise", "Juriste",
+            "Conseiller juridique", "Assistant juridique", "Magistrat",
+            "Fonctionnaire", "Politologue", "Juriste en droit européen",
+            "Juriste en propriété intellectuelle", "Responsable juridique",
         ],
-        "Gestion / Comptabilite": [
-            "Comptable", "Expert-Comptable", "Controleur de gestion",
-            "Auditeur financier", "Directeur Administratif et Financier",
-            "Gestionnaire de patrimoine", "Tresorier",
+        "Économie et Gestion": [
+            "Gestionnaire de projet", "Consultant en gestion", "Économiste",
+            "Responsable marketing", "Entrepreneur", "Consultant en management",
+            "Analyste financier", "Assistant de direction",
+            "Responsable logistique", "Contrôleur de gestion",
+            "Responsable administratif", "Chef de projet",
+            "Expert-comptable", "Responsable e-commerce",
         ],
-        "Droit": [
-            "Avocat", "Juriste d'entreprise", "Notaire", "Magistrat",
-            "Huissier de justice", "Juriste en droit public",
-            "Juriste en droit social", "Mediateur juridique",
+        "Éducation et Sciences Sociales": [
+            "Formateur", "Enseignant", "Conseiller pédagogique",
+            "Éducateur spécialisé", "Professeur des écoles", "Éducateur",
+            "Animateur socioculturel", "Coordinateur pédagogique",
+            "Conseiller d'orientation", "Conseiller en insertion professionnelle",
         ],
-        "Sciences Politiques": [
-            "Diplomate", "Charge de mission en collectivite",
-            "Analyste en relations internationales", "Journaliste politique",
-            "Conseiller politique", "Charge de communication politique",
-            "Fonctionnaire international",
+        "Géographie et Environnement": [
+            "Urbaniste", "Géographe", "Chargé d'études environnementales",
+            "Consultant en environnement", "Chargé de mission environnement",
+            "Technicien en environnement", "Consultant en développement durable",
+            "Conseiller en aménagement", "Écologue", "Biologiste",
+            "Chargé de mission en aménagement", "Paysagiste",
         ],
-        "Sante / Medecine": [
-            "Medecin generaliste", "Medecin specialiste", "Chirurgien",
-            "Pharmacien", "Dentiste", "Sage-femme", "Kinesitherapeute",
-            "Infirmier", "Orthophoniste", "Psychomotricien",
-            "Manipulateur en radiologie", "Opticien",
+        "Informatique et Technologies": [
+            "Développeur", "Ingénieur en informatique", "Data analyst",
+            "Développeur web", "Responsable qualité", "Chef de produit",
+            "Technicien de laboratoire", "Administrateur systèmes",
+            "Ingénieur télécommunications", "Consultant en cybersécurité",
+            "Data scientist", "Chef de projet informatique",
+            "Consultant en systèmes d'information", "Développeur logiciel",
         ],
-        "Lettres / Langues": [
-            "Enseignant de lettres", "Traducteur", "Interprete",
-            "Redacteur / Correcteur", "Editeur", "Bibliothecaire",
-            "Professeur de langues", "Linguiste",
+        "Ingénierie": [
+            "Ingénieur en mécanique", "Responsable qualité",
+            "Technicien de production", "Responsable de production",
+            "Technicien de maintenance", "Chef de projet",
+            "Ingénieur civil", "Conducteur de travaux",
+            "Ingénieur en génie civil", "Consultant en ingénierie",
+            "Ingénieur en électronique", "Ingénieur en systèmes",
         ],
-        "Commerce / Marketing": [
-            "Chef de produit", "Responsable Marketing", "Commercial",
-            "Responsable e-commerce", "Chef de publicite",
-            "Directeur Commercial", "Charge de communication",
-            "Community Manager", "Responsable CRM",
+        "Langues et Communication": [
+            "Traducteur", "Chargé de communication", "Professeur de langues",
+            "Interprète", "Enseignant de langues", "Responsable export",
+            "Diplomate", "Chargé de relations internationales",
+            "Éditeur", "Journaliste", "Chercheur en linguistique",
+            "Chargé de communication internationale",
         ],
-        "Sciences / Ingenierie": [
-            "Ingenieur en genie civil", "Ingenieur en mecanique",
-            "Ingenieur en electronique", "Ingenieur en energie",
-            "Chercheur en physique", "Chercheur en chimie",
-            "Ingenieur en materiaux", "Technicien de laboratoire",
+        "Santé et Médecine": [
+            "Médecin", "Pharmacien", "Infirmier", "Chercheur en santé",
+            "Technicien de laboratoire", "Consultant en santé",
+            "Kinésithérapeute", "Chercheur en biologie",
+            "Orthoptiste", "Ergothérapeute", "Gestionnaire de santé",
         ],
-        "Arts / Design": [
-            "Graphiste", "Designer UX/UI", "Directeur Artistique",
-            "Illustrateur", "Architecte d'interieur", "Animateur 3D",
-            "Photographe", "Webdesigner",
+        "Sciences": [
+            "Technicien de laboratoire", "Chercheur", "Ingénieur",
+            "Ingénieur chimiste", "Analyste de données",
+            "Chercheur en physique", "Professeur de mathématiques",
+            "Statisticien", "Chercheur en chimie", "Chimiste",
+            "Chercheur en biologie", "Chercheur en mathématiques",
+            "Ingénieur en chimie", "Économiste",
         ],
-        "Communication / Media": [
-            "Journaliste", "Attache de presse", "Charge de communication",
-            "Responsable editorial", "Redacteur web",
-            "Responsable relations publiques", "Planneur strategique",
-        ],
-        "Psychologie / Sciences Sociales": [
-            "Psychologue clinicien", "Psychologue du travail",
-            "Sociologue", "Conseiller d'orientation",
-            "Charge d'etudes sociologiques", "Mediateur social",
-        ],
-        "Sciences de l'Education": [
-            "Professeur des ecoles", "Conseiller pedagogique",
-            "Formateur pour adultes", "Ingenieur pedagogique",
-            "Educateur specialise", "Responsable de formation",
-        ],
-        "Environnement / Geographie": [
-            "Ingenieur environnement", "Charge de mission developpement durable",
-            "Ecologue", "Urbaniste", "Cartographe / Geomaticien",
-            "Climatologue", "Gestionnaire d'espaces naturels",
+        "Sciences Humaines et Sociales": [
+            "Éditeur", "Historien", "Professeur de lettres", "Journaliste",
+            "Archiviste", "Enseignant", "Psychologue",
+            "Professeur d'histoire", "Philosophe", "Chargé d'études",
+            "Sociologue", "Écrivain", "Conseiller d'orientation",
+            "Consultant en ressources humaines",
         ],
     }
 
@@ -288,21 +294,18 @@ with st.sidebar:
 
     # Matieres universite par domaine (noms reels des UE)
     DOMAINES_MATIERES_UNIV = {
-        "Data Science / IA": ["Algebre", "Analyse", "Statistiques", "Probabilites", "Programmation"],
-        "Informatique / Dev": ["Algorithmique", "Programmation", "Bases de donnees", "Algebre", "Analyse"],
-        "Economie": ["Microeconomie", "Macroeconomie", "Statistiques", "Mathematiques appliquees", "Anglais"],
-        "Gestion / Comptabilite": ["Comptabilite generale", "Controle de gestion", "Finance", "Droit des affaires", "Economie"],
-        "Droit": ["Droit civil", "Droit constitutionnel", "Histoire du droit", "Introduction au droit", "Methodologie juridique"],
-        "Sciences Politiques": ["Science politique", "Relations internationales", "Sociologie politique", "Histoire contemporaine", "Anglais"],
-        "Sante / Medecine": ["Biologie cellulaire", "Chimie organique", "Physique", "Anatomie", "Biochimie"],
-        "Lettres / Langues": ["Litterature francaise", "Anglais", "Langue vivante 2", "Linguistique", "Civilisation"],
-        "Commerce / Marketing": ["Marketing", "Economie", "Anglais commercial", "Communication", "Gestion"],
-        "Sciences / Ingenierie": ["Algebre", "Analyse", "Physique", "Chimie", "Informatique"],
-        "Arts / Design": ["Pratique artistique", "Culture artistique", "Histoire de l'art", "Projet creatif", "Anglais"],
-        "Communication / Media": ["Theories de la communication", "Ecriture journalistique", "Sociologie des medias", "Anglais", "Culture generale"],
-        "Psychologie / Sciences Sociales": ["Psychologie generale", "Sociologie", "Statistiques", "Methodologie", "Anglais"],
-        "Sciences de l'Education": ["Sciences de l'education", "Psychologie du developpement", "Sociologie", "Didactique", "Anglais"],
-        "Environnement / Geographie": ["Geographie physique", "Ecologie", "Geomatique", "Climatologie", "Anglais"],
+        "Arts, Culture et Création": ["Pratique artistique", "Culture artistique", "Histoire de l'art", "Projet creatif", "Anglais"],
+        "Communication et Médias": ["Theories de la communication", "Ecriture journalistique", "Sociologie des medias", "Anglais", "Culture generale"],
+        "Droit et Sciences Juridiques": ["Droit civil", "Droit constitutionnel", "Histoire du droit", "Introduction au droit", "Methodologie juridique"],
+        "Économie et Gestion": ["Microeconomie", "Macroeconomie", "Comptabilite", "Finance", "Statistiques"],
+        "Éducation et Sciences Sociales": ["Sciences de l'education", "Psychologie du developpement", "Sociologie", "Didactique", "Anglais"],
+        "Géographie et Environnement": ["Geographie physique", "Ecologie", "Geomatique", "Climatologie", "Anglais"],
+        "Informatique et Technologies": ["Algorithmique", "Programmation", "Bases de donnees", "Algebre", "Analyse"],
+        "Ingénierie": ["Algebre", "Analyse", "Physique", "Chimie", "Informatique"],
+        "Langues et Communication": ["Litterature francaise", "Anglais", "Langue vivante 2", "Linguistique", "Civilisation"],
+        "Santé et Médecine": ["Biologie cellulaire", "Chimie organique", "Physique", "Anatomie", "Biochimie"],
+        "Sciences": ["Algebre", "Analyse", "Physique", "Chimie", "Statistiques"],
+        "Sciences Humaines et Sociales": ["Psychologie generale", "Sociologie", "Histoire", "Philosophie", "Anglais"],
     }
 
     if est_lyceen:
@@ -523,84 +526,45 @@ if parcours and formation_choisie:
                 indicateur = f"**{num}**"
 
             with st.container():
-                st.markdown(f"""
+                # Formation réelle recommandée pour cette étape (1ère de la liste)
+                options = etape.get("options", [])
+                formation_recommandee = options[0] if options else None
+
+                if formation_recommandee:
+                    nom_f   = formation_recommandee.get("nom", etape.get("titre", ""))
+                    type_f  = formation_recommandee.get("type_diplome", "")
+                    etab_f  = formation_recommandee.get("etablissement", "")
+                    ville_f = formation_recommandee.get("ville", "")
+                    desc_f  = formation_recommandee.get("description", "")
+                    type_badge = f"<span style='background:#e8f4fd;color:#1a73e8;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:600;'>{type_f}</span>&nbsp;" if type_f else ""
+                    etab_html  = f"<br><small>🏛️ <strong>{etab_f}</strong> &nbsp;|&nbsp; 📍 {ville_f}</small>" if etab_f else ""
+                    desc_html  = f"<br><small style='color:#555;font-style:italic;'>{desc_f}</small>" if desc_f else ""
+                    st.markdown(f"""
+<div class="step-card">
+    <small>Etape {num} &nbsp;|&nbsp; {etape.get('duree', '')} &nbsp;|&nbsp; {etape.get('periode', '')}</small>
+    <br>{type_badge}<strong>{nom_f}</strong>
+    {etab_html}{desc_html}
+</div>
+                    """, unsafe_allow_html=True)
+                    # Autres formations disponibles dans un expander
+                    if len(options) > 1:
+                        with st.expander(f"Voir {len(options)-1} autre(s) formation(s) disponible(s)"):
+                            for opt in options[1:]:
+                                type_o = opt.get("type_diplome", "")
+                                st.markdown(
+                                    f"- **{opt.get('nom','')}** — {type_o} &nbsp;|&nbsp; "
+                                    f"🏛️ {opt.get('etablissement','?')} &nbsp;|&nbsp; 📍 {opt.get('ville','?')}"
+                                )
+                else:
+                    st.markdown(f"""
 <div class="step-card">
     <strong>Etape {indicateur} — {etape.get('titre', '')}</strong>
     <br><small>Duree : {etape.get('duree', '?')} &nbsp;|&nbsp; {etape.get('periode', '')}</small>
 </div>
-                """, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
 
                 if etape.get("description"):
                     st.markdown(etape["description"])
-
-                # --- Cas 1 : choix deja fait pour cette etape ---
-                if choix_fait:
-                    st.success(
-                        f"✅ Formation choisie : **{choix_fait['choix']}**"
-                        + (f" — {choix_fait.get('etablissement', '')}" if choix_fait.get('etablissement') else "")
-                        + (f", {choix_fait.get('ville', '')}" if choix_fait.get('ville') else "")
-                    )
-
-                # --- Cas 2 : options disponibles a choisir ---
-                elif etape.get("options"):
-                    options     = etape.get("options", [])
-                    ville_rech  = etape.get("ville_recherche", "")
-
-                    # Titre de la section
-                    nb = len(options)
-                    geo_info = f" — formations près de <strong>{ville_rech}</strong>" if ville_rech else ""
-                    st.markdown(
-                        f"<div class='section-options-title'>"
-                        f"📚 Formations disponibles — {nb} formation{'s' if nb > 1 else ''}{geo_info} :"
-                        f"</div>",
-                        unsafe_allow_html=True
-                    )
-
-                    for j, opt in enumerate(options):
-                        details_type = f" &nbsp;&bull;&nbsp; {opt.get('type_diplome', '')}" if opt.get('type_diplome') else ""
-                        description  = opt.get("description", "")
-                        desc_html    = f"<br><small style='color:#555;font-style:italic;'>{description}</small>" if description else ""
-                        col_opt, col_choix = st.columns([4, 1])
-                        with col_opt:
-                            st.markdown(f"""
-<div class="base-card">
-    <span class="badge-base">Parcoursup</span>
-    <strong>&nbsp;{opt.get('nom', '')}</strong>{details_type}
-    <br><small>Etablissement : {opt.get('etablissement', '?')} &nbsp;|&nbsp; Ville : {opt.get('ville', '?')}</small>
-    {desc_html}
-</div>
-                            """, unsafe_allow_html=True)
-                        with col_choix:
-                            st.markdown("<br>", unsafe_allow_html=True)
-                            if st.button("Choisir", key=f"choix_e{num}_{j}", use_container_width=True):
-                                st.session_state["choix_etapes"][str(num)] = {
-                                    "etape": num,
-                                    "choix": opt.get("nom", ""),
-                                    "etablissement": opt.get("etablissement", ""),
-                                    "ville": opt.get("ville", ""),
-                                }
-                                for k in list(st.session_state["choix_etapes"].keys()):
-                                    if int(k) > num:
-                                        del st.session_state["choix_etapes"][k]
-                                pipeline = charger_pipeline()
-                                choix_liste = sorted(
-                                    st.session_state["choix_etapes"].values(),
-                                    key=lambda x: x["etape"]
-                                )
-                                with st.spinner("Adaptation du parcours..."):
-                                    try:
-                                        suite = pipeline.generer_suite_parcours(
-                                            profil, choix_liste,
-                                            formation_choisie.get("nom", "")
-                                        )
-                                        if suite.get("etapes"):
-                                            for i_new, e_new in enumerate(suite["etapes"]):
-                                                e_new["numero"] = num + 1 + i_new
-                                            parcours["etapes"] = etapes[:idx + 1] + suite["etapes"]
-                                            st.session_state["parcours"] = parcours
-                                    except Exception as e:
-                                        st.error(f"Erreur : {str(e)}")
-                                st.rerun()
 
                 elif etape.get("formation_ou_action"):
                     # Fallback ancien format
@@ -663,25 +627,6 @@ if parcours and formation_choisie:
 </div>
             """, unsafe_allow_html=True)
 
-    # Alternatives
-    if parcours.get("alternatives"):
-        st.markdown("### Plans alternatifs")
-        for a in parcours["alternatives"]:
-            lignes = []
-            if a.get("matieres_cles"):
-                matieres = ", ".join(a["matieres_cles"]) if isinstance(a["matieres_cles"], list) else a["matieres_cles"]
-                lignes.append(f"<br><strong>Matieres cles :</strong> {matieres}")
-            if a.get("validation"):
-                lignes.append(f"<br><strong>Validation :</strong> {a['validation']}")
-            if a.get("raison"):
-                lignes.append(f"<br><em>{a['raison']}</em>")
-            details = "".join(lignes)
-            st.markdown(f"""
-<div class="alt-card">
-    <strong>{a.get('situation', '')}</strong>
-    <br>-> {a.get('plan_b', '')}{details}
-</div>
-            """, unsafe_allow_html=True)
 
     # Conseils
     if parcours.get("conseils_personnalises"):

@@ -26,11 +26,15 @@ Son objectif professionnel final peut etre dans un domaine DIFFERENT.
 REGLE : le parcours doit d'abord consolider le domaine actuel, PUIS introduire
 une ETAPE PASSERELLE progressive vers le domaine cible si necessaire.
 
-Exemple : etudiant en L2 Economie qui veut devenir Data Scientist :
-  - L3 : Licence Economie-Statistiques ou Maths-Eco (consolider, renforcer les maths)
-  - M1 : M1 Econometrie et Statistiques (PASSERELLE : pont entre Eco et Data Science)
-  - M2 : M2 Data Science ou Statistique Appliquee (objectif atteint)
+Exemple : etudiant en Terminale qui veut devenir Data Analyst :
+  - L1 : L1 Mathematiques-Informatique (bases)
+  - L2 : L2 Mathematiques-Informatique (approfondissement)
+  - L3 : L3 Informatique parcours Data (specialisation)
+  - M1 : M1 Data Science (passerelle vers l'objectif)
+  - M2 : M2 Data Science et Intelligence Artificielle (objectif atteint)
 
+Chaque annee (L1, L2, L3, M1, M2) est une etape distincte avec un intitule de formation different.
+NE JAMAIS regrouper L1+L2 ou L2+L3 en une seule etape.
 NE JAMAIS faire un saut brutal de domaine. Chaque etape doit etre accessible depuis la precedente.
 
 Progression obligatoire selon le cycle :
@@ -59,10 +63,18 @@ Utilise UNIQUEMENT ces formations pour le champ "options". N'invente aucune form
 
 === REGLES DE PROGRESSION ===
 1. Partir EXACTEMENT de {niveau_actuel}. Ne jamais revenir en arriere.
-2. Ne jamais sauter une annee (L2 -> L3 -> M1 -> M2, sans sauter).
-3. Respecter la zone geographique du profil.
-4. Generer entre 3 et 6 etapes.
-5. Signaler clairement l'etape passerelle dans sa description si applicable.
+2. UNE etape = UNE annee academique. Ne JAMAIS regrouper plusieurs annees en une seule etape.
+3. Ne jamais sauter une annee :
+   - Terminale -> L1 -> L2 -> L3 -> M1 -> M2  (5 etapes)
+   - L1        -> L2 -> L3 -> M1 -> M2         (4 etapes)
+   - L2        -> L3 -> M1 -> M2               (3 etapes)
+   - L3        -> M1 -> M2                     (2 etapes)
+   - BTS/BUT   -> L2 -> L3 -> M1 -> M2         (4 etapes)
+4. Geographie :
+   - L1, L2, L3, BUT : respecter la ville preferee du profil.
+   - M1, M2 : l'etudiant peut changer de ville. Proposer le Master le plus pertinent pour l'objectif, quelle que soit la ville.
+5. Le titre de chaque etape doit indiquer le niveau exact : "L1 ...", "L2 ...", "L3 ...", "M1 ...", "M2 ...".
+6. Signaler clairement l'etape passerelle dans sa description si applicable.
 
 === FORMAT OPTIONS ===
 Champ "options" de chaque etape : utiliser le NOM EXACT et l'etablissement de la liste ci-dessus.
@@ -111,15 +123,6 @@ Genere le parcours en respectant EXACTEMENT ce format JSON :
     {{
       "defi": "Defi lie au profil ou a la transition de domaine",
       "solution": "Solution concrete"
-    }}
-  ],
-  "alternatives": [
-    {{
-      "situation": "Si difficulte dans la transition...",
-      "matieres_cles": ["Matiere 1"],
-      "validation": "Validation par les notes",
-      "plan_b": "Formation alternative",
-      "raison": "Pourquoi cette alternative"
     }}
   ],
   "conseils_personnalises": [

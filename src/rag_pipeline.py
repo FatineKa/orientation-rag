@@ -374,36 +374,48 @@ class PipelineRAG:
             docs = self.vectorstore.similarity_search(requete, k=max(50, top_k * 10))
             docs = docs[:max(50, top_k * 10)]
 
-        # --- Re-ranking : domaine de l'etudiant EN PREMIER, puis type adapte au niveau ---
+        # --- Filtre dur + Re-ranking : type accessible au niveau, puis domaine de l'etudiant ---
         niveau_actuel   = profil.get("niveau_actuel", "")
         types_preferes  = self._niveau_vers_types_preferes(niveau_actuel)
         domaines_bd     = self._domaines_profil_vers_bd(profil.get("domaines_etudes_preferes", []))
         print(f"  Niveau actuel : {niveau_actuel} -> types preferes : {types_preferes}")
         print(f"  Domaines BD attendus : {domaines_bd}")
 
+        # Filtre dur : garder UNIQUEMENT les types accessibles au niveau de l'etudiant
+        # Pas de fallback — un L1 ne voit jamais un Master, meme si peu de Licences disponibles
+        docs_filtres = [d for d in docs if d.metadata.get("type_diplome", "") in types_preferes]
+
         def score_doc(doc):
             td  = doc.metadata.get("type_diplome", "")
             dom = doc.metadata.get("domaine", "")
+            # rang du type prefere (0 = meilleur) — priorite absolue sur le domaine
+            type_score   = types_preferes.index(td) if td in types_preferes else len(types_preferes) + 10
             # 0 = domaine de l'etudiant, 1 = autre domaine
             domain_score = 0 if (domaines_bd and dom in domaines_bd) else 1
-            # rang du type prefere (0 = meilleur)
-            type_score   = types_preferes.index(td) if td in types_preferes else len(types_preferes)
-            return (domain_score, type_score)
+            return (type_score, domain_score)
 
-        docs = sorted(docs, key=score_doc)[:top_k]
+        docs = sorted(docs_filtres, key=score_doc)[:top_k]
         print(f"{len(docs)} formations recommandees (apres re-ranking domaine + niveau)\n")
 
-        # Extraire les metadonnees de chaque formation
+        # Extraire les metadonnees de chaque formation (sans doublons)
         formations = []
+        seen_rec = set()
         for i, doc in enumerate(docs):
             meta = doc.metadata
+            nom   = meta.get("nom", "Formation")
+            etab  = meta.get("etablissement", "")
+            ville = meta.get("ville", "")
+            key = f"{nom.lower().strip()}|{etab.lower().strip()}|{ville.lower().strip()}"
+            if key in seen_rec:
+                continue
+            seen_rec.add(key)
             formations.append({
                 "index": i,
-                "nom": meta.get("nom", "Formation"),
+                "nom": nom,
                 "type": meta.get("type_diplome", meta.get("type", "")),
                 "domaine": meta.get("domaine", ""),
-                "ville": meta.get("ville", ""),
-                "etablissement": meta.get("etablissement", ""),
+                "ville": ville,
+                "etablissement": etab,
                 "duree": meta.get("duree", ""),
                 "extrait": doc.page_content[:300],
                 "contenu_complet": doc.page_content,
@@ -415,31 +427,34 @@ class PipelineRAG:
     TYPES_CYCLE_UNIV = {"Licence", "Master"}
     TYPES_CYCLE_ALT  = {"BUT"}
 
-    # Mapping : domaines de l'app (selectbox) -> domaines de la base ChromaDB
-    # Permet de filtrer les formations par domaine de l'etudiant
+    # Mapping domaine UI (selectbox app.py) -> domaines ChromaDB
+    # Les cles correspondent exactement aux cles de OBJECTIFS_PAR_DOMAINE dans app.py
     DOMAINE_VERS_BD = {
-        "Data Science / IA":               {"Informatique et Technologies", "Sciences"},
-        "Informatique / Dev":              {"Informatique et Technologies"},
-        "Economie":                        {"Économie et Gestion", "DROIT, ECONOMIE, GESTION",
+        "Arts, Culture et Création":       {"Arts, Culture et Création", "ARTS, LETTRES, LANGUES"},
+        "Communication et Médias":         {"Communication et Médias", "Communication et Journalisme",
+                                            "CULTURE ET COMMUNICATION", "Langues et Communication"},
+        "Droit et Sciences Juridiques":    {"Droit et Sciences Juridiques", "DROIT, ECONOMIE, GESTION",
                                             "DROIT, ECONOMIE, GESTION ET SCIENCE POLITIQUE"},
-        "Gestion / Comptabilite":          {"Économie et Gestion", "DROIT, ECONOMIE, GESTION"},
-        "Droit":                           {"Droit et Sciences Juridiques", "DROIT, ECONOMIE, GESTION",
+        "Économie et Gestion":             {"Économie et Gestion", "DROIT, ECONOMIE, GESTION",
                                             "DROIT, ECONOMIE, GESTION ET SCIENCE POLITIQUE"},
-        "Sciences Politiques":             {"Sciences Humaines et Sociales", "SCIENCES HUMAINES ET SOCIALES",
-                                            "DROIT, ECONOMIE, GESTION ET SCIENCE POLITIQUE"},
-        "Sante / Medecine":                {"Santé et Médecine", "SCIENCES, TECHNOLOGIES, SANTÉ"},
-        "Lettres / Langues":               {"Langues et Communication", "ARTS, LETTRES, LANGUES"},
-        "Commerce / Marketing":            {"Économie et Gestion", "Communication et Médias",
-                                            "DROIT, ECONOMIE, GESTION"},
-        "Sciences / Ingenierie":           {"Sciences", "Ingénierie", "SCIENCES, TECHNOLOGIES, SANTÉ",
-                                            "Informatique et Technologies"},
-        "Arts / Design":                   {"Arts, Culture et Création", "ARTS, LETTRES, LANGUES"},
-        "Communication / Media":           {"Communication et Médias", "Langues et Communication"},
-        "Psychologie / Sciences Sociales": {"Sciences Humaines et Sociales", "SCIENCES HUMAINES ET SOCIALES",
+        "Éducation et Sciences Sociales":  {"Éducation et Sciences Sociales",
+                                            "Sciences Humaines et Sociales", "Autre Domaine"},
+        "Géographie et Environnement":     {"Géographie et Environnement",
+                                            "Environnement et Développement Durable",
+                                            "SCIENCES DE LA MER ET DU LITTORAL"},
+        "Informatique et Technologies":    {"Informatique et Technologies",
+                                            "SCIENCES, TECHNOLOGIES, SANTÉ"},
+        "Ingénierie":                      {"Ingénierie", "Informatique et Technologies",
+                                            "SCIENCES, TECHNOLOGIES, SANTÉ"},
+        "Langues et Communication":        {"Langues et Communication", "ARTS, LETTRES, LANGUES",
+                                            "Communication et Médias"},
+        "Santé et Médecine":               {"Santé et Médecine", "SCIENCES, TECHNOLOGIES, SANTÉ",
+                                            "SCIENCES DE LA SANTE"},
+        "Sciences":                        {"Sciences", "SCIENCES, TECHNOLOGIES, SANTÉ",
+                                            "SCIENCES ET TECHNOLOGIES"},
+        "Sciences Humaines et Sociales":   {"Sciences Humaines et Sociales",
+                                            "SCIENCES HUMAINES ET SOCIALES",
                                             "Éducation et Sciences Sociales"},
-        "Sciences de l'Education":         {"Éducation et Sciences Sociales",
-                                            "Sciences Humaines et Sociales"},
-        "Environnement / Geographie":      {"Géographie et Environnement"},
     }
 
     def _domaines_profil_vers_bd(self, domaines_profil: list) -> set:
@@ -483,6 +498,34 @@ class PipelineRAG:
             # Terminale, L1, BTS, BUT, Prepa
             return ["Licence", "BUT"]
 
+    def _types_diplome_pour_etape(self, titre_etape: str, cycle: str = "universitaire") -> set:
+        """
+        Determine le(s) type(s) de diplome attendus pour une etape du parcours
+        en se basant sur le titre de l'etape (ex: 'L1 Informatique' -> {'Licence'}).
+
+        Logique :
+        - Titre contient M1, M2, Master       -> {'Master'}
+        - Titre contient L1, L2, L3, Licence  -> {'Licence'}
+        - Titre contient BUT                   -> {'BUT'}
+        - Titre contient Licence Pro           -> {'Licence', 'Master'}
+        - Cycle BUT sans match                 -> {'BUT'}
+        - Fallback                             -> {'Licence', 'BUT'}
+        """
+        t = titre_etape.lower()
+
+        if any(x in t for x in ["m1", "m2", "master"]):
+            return {"Master"}
+        elif "licence pro" in t or "lp " in t:
+            return {"Licence", "Master"}
+        elif any(x in t for x in ["l1", "l2", "l3", "licence"]):
+            return {"Licence"}
+        elif "but" in t:
+            return {"BUT"}
+        elif cycle == "but":
+            return {"BUT"}
+        else:
+            return {"Licence", "BUT"}
+
     # Progression par cycle
     PROGRESSION_UNIV = ["L1", "L2", "L3", "M1", "M2"]
     PROGRESSION_BUT  = ["BUT 1", "BUT 2", "BUT 3", "Licence Pro / Insertion"]
@@ -508,27 +551,10 @@ class PipelineRAG:
 
     def _extraire_ville_etape(self, etape: dict, profil: dict) -> str:
         """
-        Extrait la ville associee a une etape specifique du parcours.
-        Priorite : options_ia[0].ville > description > profil.contraintes_geographiques
-        Permet de chercher des formations SIMILAIRES dans la meme ville que l'etape.
+        Retourne la ville de recherche pour une etape.
+        On utilise TOUJOURS la ville preferee du profil etudiant —
+        le LLM ne peut pas imposer une autre ville (ex: Paris pour les Masters).
         """
-        # 1. Chercher dans les options suggerees par le LLM pour cette etape
-        options_ia = etape.get("options_ia", [])
-        for opt in options_ia:
-            ville = (opt.get("ville") or "").strip()
-            if ville and len(ville) > 2:
-                return ville
-
-        # 2. Chercher dans la description de l'etape
-        description = (etape.get("description") or "").lower()
-        villes_profil = self._extraire_villes(
-            profil.get("contraintes_geographiques", "")
-        )
-        for v in villes_profil:
-            if v in description:
-                return v
-
-        # 3. Fallback : contrainte geographique globale du profil
         return profil.get("contraintes_geographiques", "")
 
     def _filtrer_par_type(self, docs: list, types_autorises: set) -> list:
@@ -550,12 +576,15 @@ class PipelineRAG:
         """
         formations = []
         seen = set()
-        for doc in docs[:top_k * 3]:          # sur-fetcher pour avoir assez apres dedup
+        for doc in docs[:top_k * 5]:          # sur-fetcher pour avoir assez apres dedup
             if len(formations) >= top_k:
                 break
             meta = doc.metadata
             nom = meta.get("nom", "Formation")
-            key = nom.lower()[:40]
+            etab = meta.get("etablissement", "")
+            ville = meta.get("ville", "")
+            # Cle unique : nom complet + etablissement + ville
+            key = f"{nom.lower().strip()}|{etab.lower().strip()}|{ville.lower().strip()}"
             if key not in seen:
                 seen.add(key)
                 # Extraire une description courte : on prend les debouches et competences
@@ -578,37 +607,46 @@ class PipelineRAG:
     def _rechercher_docs_bruts(self, requete: str, profil: dict, over_fetch: int = 50) -> list:
         """
         Recupere un grand lot de documents ChromaDB (sans filtre de type)
-        en tenant compte des contraintes geographiques du profil.
-        Le filtrage par type est fait en aval par les methodes appelantes.
+        en respectant STRICTEMENT la contrainte geographique du profil.
+        Si une ville est specifiee, on ne retourne QUE les formations de cette ville
+        (ou villes proches). Pas de fallback vers d'autres villes.
         """
         contrainte_geo = profil.get("contraintes_geographiques", profil.get("contraintes", ""))
         villes = self._extraire_villes(contrainte_geo)
 
-        if villes:
-            docs_tous = self.vectorstore.similarity_search(requete, k=over_fetch)
-            # Filtre geographique manuel
-            docs_ville = [
-                d for d in docs_tous
-                if any(v in (d.metadata.get("ville", "") or "").lower() for v in villes)
-            ]
-            if docs_ville:
-                return docs_ville
-            # Villes proches si pas de resultat exact
-            villes_proches = []
-            for v in villes:
-                villes_proches.extend(self._trouver_villes_proches(v))
-            villes_proches = list(set(villes_proches))
-            if villes_proches:
-                docs_proches = [
-                    d for d in docs_tous
-                    if any(v in (d.metadata.get("ville", "") or "").lower() for v in villes_proches)
-                ]
-                if docs_proches:
-                    return docs_proches
-            # Fallback : retourner tous
+        docs_tous = self.vectorstore.similarity_search(requete, k=over_fetch)
+
+        if not villes:
             return docs_tous
-        else:
-            return self.vectorstore.similarity_search(requete, k=over_fetch)
+
+        # Filtre strict : ville exacte
+        docs_ville = [
+            d for d in docs_tous
+            if any(v in (d.metadata.get("ville", "") or "").lower() for v in villes)
+        ]
+        if docs_ville:
+            return docs_ville
+
+        # Villes proches si aucun resultat exact
+        villes_proches = []
+        for v in villes:
+            villes_proches.extend(self._trouver_villes_proches(v))
+        villes_proches = list(set(villes_proches))
+        if villes_proches:
+            docs_proches = [
+                d for d in docs_tous
+                if any(v in (d.metadata.get("ville", "") or "").lower() for v in villes_proches)
+            ]
+            if docs_proches:
+                return docs_proches
+
+        # Aucune formation dans cette ville : on elargit la recherche avec plus de docs
+        docs_elargi = self.vectorstore.similarity_search(requete, k=over_fetch * 3)
+        docs_ville_elargi = [
+            d for d in docs_elargi
+            if any(v in (d.metadata.get("ville", "") or "").lower() for v in villes)
+        ]
+        return docs_ville_elargi if docs_ville_elargi else []
 
     def rechercher_formations_pour_etape(
         self,
@@ -624,10 +662,11 @@ class PipelineRAG:
                         Si None, aucun filtre de type.
         """
         domaine = " ".join(profil.get("domaines_etudes_preferes", []))
-        # Si titre_etape contient deja l'objectif ou le domaine, on evite les doublons
-        requete = f"{titre_etape} {objectif} {domaine}".strip()
+        ville   = profil.get("contraintes_geographiques", "")
+        # Requete enrichie : niveau + objectif + domaine + ville pour maximiser la pertinence
+        requete = f"{titre_etape} {objectif} {domaine} {ville}".strip()
 
-        docs = self._rechercher_docs_bruts(requete, profil, over_fetch=120)
+        docs = self._rechercher_docs_bruts(requete, profil, over_fetch=150)
 
         if types_diplome:
             docs = self._filtrer_par_type(docs, types_diplome)
@@ -724,29 +763,102 @@ class PipelineRAG:
             return parcours
 
         objectif = profil.get("objectif_professionnel", profil.get("objectif", ""))
-        types_cycle = self.TYPES_CYCLE_ALT if cycle == "but" else self.TYPES_CYCLE_UNIV
+        ville_pref = self._extraire_ville_etape(parcours["etapes"][0], profil) if parcours["etapes"] else ""
 
+        # --- Logique : 1 recherche par PHASE, pas par etape ---
+        # Une Licence = 1 programme de 3 ans (L1/L2/L3 = meme formation, meme universite)
+        # Un Master = 1 programme de 2 ans (M1/M2 = meme formation, meme universite)
+        # On cherche UNE fois la meilleure Licence et UNE fois le meilleur Master,
+        # puis on assigne la meme formation a toutes les etapes de chaque phase.
+
+        # 1. Chercher la meilleure LICENCE dans la ville preferee
+        domaine = " ".join(profil.get("domaines_etudes_preferes", []))
+        profil_licence = {**profil, "contraintes_geographiques": ville_pref}
+        options_licence = self.rechercher_formations_pour_etape(
+            f"Licence {domaine}", objectif, profil_licence, top_k,
+            types_diplome={"Licence"},
+        )
+        # Fallback licence sans contrainte geo
+        if not options_licence:
+            profil_sans_geo = {**profil, "contraintes_geographiques": ""}
+            options_licence = self.rechercher_formations_pour_etape(
+                f"Licence {domaine}", objectif, profil_sans_geo, top_k,
+                types_diplome={"Licence"},
+            )
+
+        # 2. Chercher le meilleur MASTER pour l'objectif (national, par debouches)
+        options_master = self._rechercher_master_par_objectif(objectif, profil, top_k)
+
+        # 3. Chercher le meilleur BUT si cycle BUT
+        options_but = []
+        if cycle == "but":
+            options_but = self.rechercher_formations_pour_etape(
+                f"BUT {domaine}", objectif, profil_licence, top_k,
+                types_diplome={"BUT"},
+            )
+
+        # 4. Assigner les formations aux etapes
         for etape in parcours["etapes"]:
             titre = etape.get("titre", "")
-
-            # 1. Archiver les suggestions LLM
             etape["options_ia"] = etape.get("options", [])
+            types_etape = self._types_diplome_pour_etape(titre, cycle)
 
-            # 2. Extraire la ville specifique a cette etape
-            ville_etape = self._extraire_ville_etape(etape, profil)
-            etape["ville_recherche"] = ville_etape
+            if types_etape == {"Master"}:
+                etape["options"] = options_master
+                etape["ville_recherche"] = "France (mobilité Master)"
+            elif types_etape == {"BUT"}:
+                etape["options"] = options_but
+                etape["ville_recherche"] = ville_pref
+            else:
+                # Licence (L1/L2/L3) = meme formation
+                etape["options"] = options_licence
+                etape["ville_recherche"] = ville_pref
 
-            # 3. Construire un profil localise pour cette etape
-            profil_etape = {**profil, "contraintes_geographiques": ville_etape}
-
-            # 4. Formations reelles du cycle principal uniquement
-            etape["options"] = self.rechercher_formations_pour_etape(
-                titre, objectif, profil_etape, top_k,
-                types_diplome=types_cycle,
-            )
             etape["options_alternatives"] = []
 
         return parcours
+
+    def _rechercher_master_par_objectif(self, objectif: str, profil: dict, top_k: int = 10) -> list:
+        """
+        Recherche des Masters pertinents pour l'objectif de carriere de l'etudiant.
+        Strategie : recherche semantique large centree sur l'objectif + le metier vise,
+        SANS contrainte geographique (l'etudiant bouge apres la Licence).
+        """
+        domaine = " ".join(profil.get("domaines_etudes_preferes", []))
+        # Requete ciblee sur l'objectif professionnel
+        requete = f"Master {objectif} {domaine}"
+
+        profil_national = {**profil, "contraintes_geographiques": ""}
+        docs = self._rechercher_docs_bruts(requete, profil_national, over_fetch=200)
+        docs = self._filtrer_par_type(docs, {"Master"})
+
+        # Re-ranking : prioriser les Masters dont les debouches correspondent a l'objectif
+        objectif_lower = objectif.lower().strip()
+        objectif_mots = set(objectif_lower.split())
+
+        def score_master(doc):
+            debouches_raw = doc.metadata.get("debouches_metiers", "")
+            if isinstance(debouches_raw, str):
+                debouches = debouches_raw.lower()
+            else:
+                debouches = " ".join(debouches_raw).lower() if debouches_raw else ""
+            nom = doc.metadata.get("nom", "").lower()
+
+            # Score 0 = meilleur
+            # Match exact de l'objectif dans les debouches
+            if objectif_lower in debouches:
+                return 0
+            # Match partiel (mots de l'objectif dans debouches)
+            mots_trouves = sum(1 for m in objectif_mots if m in debouches)
+            if mots_trouves > 0:
+                return 1
+            # Match dans le nom de la formation
+            if any(m in nom for m in objectif_mots):
+                return 2
+            return 3
+
+        docs = sorted(docs, key=score_master)
+        return self._docs_vers_formations(docs, top_k)
 
     def _nettoyer_json(self, contenu: str) -> str:
         """Retire les balises markdown autour du JSON si presentes."""
@@ -817,9 +929,14 @@ class PipelineRAG:
         try:
             parcours = json.loads(self._nettoyer_json(contenu))
             print("Parcours genere avec succes\n")
-            # T2 : re-interroger la base avec ville par etape + cycle
-            print(f"Enrichissement des alternatives (ville par etape, cycle={cycle})...")
-            parcours = self.enrichir_options_etapes(parcours, profil, cycle=cycle)
+            # T2 : re-interroger la base — utiliser la ville de la formation choisie
+            ville_formation = formation_choisie.get("ville", "").strip()
+            if ville_formation:
+                profil_enrichi = {**profil, "contraintes_geographiques": ville_formation}
+            else:
+                profil_enrichi = profil
+            print(f"Enrichissement des alternatives (ville={ville_formation or profil.get('contraintes_geographiques','')}, cycle={cycle})...")
+            parcours = self.enrichir_options_etapes(parcours, profil_enrichi, cycle=cycle)
             # Stocker le cycle dans le parcours pour l'interface
             parcours["_cycle"] = cycle
             print("Enrichissement termine\n")
