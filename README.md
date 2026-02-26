@@ -2,14 +2,14 @@
 
 Système de recherche sémantique de formations académiques basé sur une architecture **RAG (Retrieval-Augmented Generation)** avec ChromaDB.
 
-## 📊 Dataset
+## Dataset
 
 - **3354 formations** (Licences, Masters, BUT)
 - Source : API Parcoursup officielle + données locales
 - Métadonnées enrichies : taux d'accès, capacité, sélectivité, académie
 - 13 domaines académiques identifiés
 
-## 🚀 Installation Rapide
+## Installation Rapide
 
 ### 1. Cloner le Projet
 
@@ -36,7 +36,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. ⚠️ IMPORTANT : Réindexer ChromaDB
+### 4. IMPORTANT : Réindexer ChromaDB
 
 **Le dossier `data/chroma_db/` n'est PAS dans Git** (trop lourd, peut être reconstruit).
 
@@ -67,7 +67,7 @@ python data\scripts\retrieve.py "licence informatique paris"
 
 **Résultats attendus :** Top 3 formations pertinentes avec scores de similarité
 
-## 📁 Structure du Projet
+## Structure du Projet
 
 ```
 TER/
@@ -80,11 +80,10 @@ TER/
 │       ├── retrieve.py             # Recherche sémantique
 │       └── fetch_parcoursup.py     # Enrichissement données
 ├── README.md
-├── report_avancement.tex           # Rapport LaTeX
 └── requirements.txt                # Dépendances Python
 ```
 
-## 🔍 Utilisation
+## Utilisation
 
 ### Recherche Simple
 
@@ -93,9 +92,9 @@ python data\scripts\retrieve.py "votre requête"
 ```
 
 **Exemples de requêtes :**
-- `"licence informatique paris"`
-- `"master droit notarial"`
-- `"but génie électrique lyon"`
+- "licence informatique paris"
+- "master droit notarial"
+- "but génie électrique lyon"
 
 ### Filtrage Automatique
 
@@ -108,9 +107,9 @@ Le système détecte automatiquement :
 ```bash
 python data\scripts\retrieve.py "Master droit à Paris"
 ```
-→ Filtre automatique : `ville: paris`, `type_diplome: Master`
+-> Filtre automatique : `ville: paris`, `type_diplome: Master`
 
-## 🔄 Réenrichir les Données (Optionnel)
+## Réenrichir les Données (Optionnel)
 
 Si vous voulez mettre à jour le dataset depuis Parcoursup :
 
@@ -125,25 +124,20 @@ Remove-Item -Recurse -Force data\chroma_db
 python data\scripts\ingest.py
 ```
 
-## 🛠️ Technologies Utilisées
+## Technologies Utilisées
 
 - **ChromaDB** : Base vectorielle pour la recherche sémantique
 - **LangChain** : Pipeline RAG
-- **Sentence Transformers** : Embedding multilingue (`paraphrase-multilingual-MiniLM-L12-v2`)
+- **Sentence Transformers** : Embedding multilingue (paraphrase-multilingual-MiniLM-L12-v2)
 - **Python 3.13**
 
-## ⚠️ Notes Importantes
+## Notes Importantes
 
-1. **ChromaDB n'est pas versionné** : Après un `git clone`, vous DEVEZ lancer `ingest.py`
+1. **ChromaDB n'est pas versionné** : Après un git clone, vous DEVEZ lancer ingest.py
 2. **Temps de recherche** : ~200-300ms pour 3354 formations
 3. **Taille index** : ~24 MB (ChromaDB)
 
-## 📝 Contributions
+## Contributions
 
-- **Dataset** : 600 → 3354 formations (+459%)
-- **Domaines** : Amélioration de 29% → 7% de formations "Autre"
+- **Dataset** : 3354 formations 
 - **Métadonnées** : Taux d'accès, capacité, sélectivité (Parcoursup)
-
-## 📄 Documentation Complète
-
-Voir `report_avancement.tex` pour les détails techniques complets.
