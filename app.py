@@ -2,6 +2,16 @@
 # Interface Streamlit pour le systeme d'orientation RAG
 # Lance avec : streamlit run app.py
 
+# Sur Streamlit Community Cloud, le sqlite3 du systeme est trop ancien
+# pour chromadb. On le remplace par pysqlite3 AVANT le premier import de
+# chromadb (direct ou via langchain_chroma / src.vectorstore).
+try:
+    __import__("pysqlite3")
+    import sys as _sys
+    _sys.modules["sqlite3"] = _sys.modules.pop("pysqlite3")
+except ImportError:
+    pass  # en local (Windows/Linux avec un sqlite3 recent), pas besoin du shim
+
 import sys
 import os
 import json
@@ -10,6 +20,17 @@ import streamlit as st
 # Ajouter le dossier du projet au path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+# Sur Streamlit Community Cloud, les cles API se configurent dans le
+# panneau "Secrets" du dashboard (st.secrets), pas via un fichier .env.
+# On les recopie dans les variables d'environnement pour que le reste du
+# code (os.getenv dans rag_pipeline.py / vectorstore.py) marche sans
+# changement, que ce soit en local (.env) ou sur le Cloud (st.secrets).
+try:
+    for _key, _value in st.secrets.items():
+        os.environ.setdefault(_key, str(_value))
+except Exception:
+    pass  # pas de secrets.toml en local : on garde le .env charge par dotenv
 
 from src.rag_pipeline import PipelineRAG
 
