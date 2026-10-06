@@ -1,5 +1,7 @@
 # Système d'Orientation Académique - RAG avec ChromaDB
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://orientation-rag-app.streamlit.app/)
+
 Système de recherche sémantique de formations académiques basé sur une architecture **RAG (Retrieval-Augmented Generation)** avec ChromaDB. Une interface Streamlit génère un parcours académique personnalisé à partir du profil de l'étudiant.
 
 ## Dataset
