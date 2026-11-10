@@ -4,6 +4,8 @@
 
 Système de recherche sémantique de formations académiques basé sur une architecture **RAG (Retrieval-Augmented Generation)** avec ChromaDB. Une interface Streamlit génère un parcours académique personnalisé à partir du profil de l'étudiant.
 
+![Architecture RAG](docs/pipeline.png)
+
 ## Dataset
 
 - **3354 formations** (Licences, Masters, BUT)
